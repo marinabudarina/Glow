@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;700;900&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #faf7ff;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Root layout ─────────────────────────────────────── */
+.root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #faf7ff;
+}
+
+/* ── WebGL host ───────────────────────────────────────── */
+.glow-host {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Typing overlay ───────────────────────────────────── */
+.typing-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #faf7ff;
+  z-index: 10;
+}
+
+.typing-line {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.typing-text {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: clamp(13px, 2vw, 22px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: #3a3050;
+  white-space: pre;
+}
+
+/* Cursor */
+.cursor {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(13px, 2vw, 22px);
+  color: #5b1fd6;
+  margin-left: 1px;
+  line-height: 1;
+  position: relative;
+  top: 0.04em;
+}
+
+.cursor-blink {
+  animation: blink 0.9s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}

@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Hello World Glow"
+version = "1.0.0"
+id = "artifacts/hello-world-glow"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20283
+
+[services.development]
+run = "pnpm --filter @workspace/hello-world-glow run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hello-world-glow", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/hello-world-glow/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20283"
+BASE_PATH = "/"
