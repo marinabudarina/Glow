@@ -20,6 +20,8 @@ import {
   lerpPaletteUniforms,
   type PaletteUniforms,
 } from "./params";
+import type { GlowConfig } from "./config";
+import { DEFAULT_CONFIG } from "./config";
 
 const FOCUS_AMT = 1.5;
 
@@ -53,7 +55,7 @@ export class BlurGlow {
   private blurU: Record<string, WebGLUniformLocation | null> = {};
   private compU: Record<string, WebGLUniformLocation | null> = {};
 
-  private fontFamily = "sans-serif";
+  private cfg: GlowConfig = { ...DEFAULT_CONFIG };
   private raf = 0;
   private running = false;
   private destroyed = false;
@@ -87,9 +89,9 @@ export class BlurGlow {
   private prevX = 0.5;
   private prevY = 0.5;
 
-  constructor(host: HTMLElement, fontFamily?: string) {
+  constructor(host: HTMLElement, cfg?: Partial<GlowConfig>) {
     this.host = host;
-    if (fontFamily) this.fontFamily = fontFamily;
+    this.cfg = { ...DEFAULT_CONFIG, ...cfg };
 
     this.canvas = document.createElement("canvas");
     Object.assign(this.canvas.style, {
@@ -112,7 +114,7 @@ export class BlurGlow {
 
     this.buildPrograms();
     if (!this.blurProg || !this.compProg) return;
-    if (!fontFamily) this.resolveFont();
+    // resolveFont only as fallback when no fontFamily was provided
     this.resize();
 
     host.addEventListener("pointermove", this.onMove);
@@ -224,26 +226,24 @@ export class BlurGlow {
     this.canvas.style.background = `rgb(${u.paper.map((c) => Math.round(c * 255)).join(",")})`;
   }
 
-  private applyPalette(i: number) {
-    const idx = i % PALETTES.length;
-    this.paletteFrom = paletteUniforms(PALETTES[idx]);
-    this.paletteTo = this.paletteFrom;
-    this.uploadPalette(this.paletteFrom);
+  /** Returns palette uniforms for a phrase, with the configured ink colour applied. */
+  private phraseUniforms(phraseIdx: number): PaletteUniforms {
+    const base = paletteUniforms(PALETTES[phraseIdx % PALETTES.length]);
+    const hex = this.cfg.phraseInkColors[phraseIdx % this.cfg.phraseInkColors.length];
+    if (hex && /^#[0-9a-fA-F]{6}$/.test(hex)) {
+      const r = parseInt(hex.slice(1, 3), 16) / 255;
+      const g = parseInt(hex.slice(3, 5), 16) / 255;
+      const b = parseInt(hex.slice(5, 7), 16) / 255;
+      return { ...base, ink: [r, g, b] };
+    }
+    return base;
   }
 
-  private resolveFont() {
-    if (typeof document === "undefined") return;
-    try {
-      const probe = document.createElement("span");
-      probe.style.cssText = "position:absolute;visibility:hidden;font-family:var(--font-glow)";
-      probe.textContent = "Ag";
-      document.body.appendChild(probe);
-      this.fontFamily =
-        getComputedStyle(probe).fontFamily.split(",")[0].replace(/["']/g, "").trim() || "sans-serif";
-      document.body.removeChild(probe);
-    } catch {
-      this.fontFamily = "sans-serif";
-    }
+  private applyPalette(i: number) {
+    const pu = this.phraseUniforms(i);
+    this.paletteFrom = pu;
+    this.paletteTo = pu;
+    this.uploadPalette(pu);
   }
 
   private makeTarget(w: number, h: number): Target {
@@ -300,7 +300,7 @@ export class BlurGlow {
   private buildMask() {
     const gl = this.gl;
     if (!gl) return;
-    const m = makeWordMask(WORDS[this.wordIdx % WORDS.length], this.canvas.width, this.canvas.height, this.fontFamily);
+    const m = makeWordMask(WORDS[this.wordIdx % WORDS.length], this.canvas.width, this.canvas.height, this.cfg.fontFamily, this.cfg.letterSpacingFactor);
     this.maskA = this.uploadMask(m.canvas, this.maskA);
     this.focusA = [m.x0, m.x1];
   }
@@ -317,7 +317,7 @@ export class BlurGlow {
     const gl = this.gl;
     if (!gl) return;
     const next = this.nextWordIdx();
-    const m = makeWordMask(WORDS[next], this.canvas.width, this.canvas.height, this.fontFamily);
+    const m = makeWordMask(WORDS[next], this.canvas.width, this.canvas.height, this.cfg.fontFamily, this.cfg.letterSpacingFactor);
     this.maskB = this.uploadMask(m.canvas, this.maskB);
     this.focusB = [m.x0, m.x1];
   }
@@ -343,9 +343,9 @@ export class BlurGlow {
   private beginMorph() {
     this.morph = 0;
     this.morphing = true;
-    // Palette is 1-to-1 with word index
-    this.paletteFrom = paletteUniforms(PALETTES[this.wordIdx]);
-    this.paletteTo = paletteUniforms(PALETTES[this.nextWordIdx()]);
+    // Palette is 1-to-1 with word index; apply per-phrase ink colour overrides
+    this.paletteFrom = this.phraseUniforms(this.wordIdx);
+    this.paletteTo = this.phraseUniforms(this.nextWordIdx());
   }
   private finishMorph() {
     // If we just finished showing "an AI ;P" for the first time, mark the run complete
@@ -480,7 +480,7 @@ export class BlurGlow {
   }
 
   private holdFor(i: number) {
-    return HOLD_MS * (HOLD_SCALE[i % WORDS.length] ?? 1);
+    return HOLD_MS * (HOLD_SCALE[i % WORDS.length] ?? 1) / this.cfg.speedMultiplier;
   }
 
   private frame = (now: number) => {
@@ -515,7 +515,7 @@ export class BlurGlow {
 
     if (!this.morphing && now >= this.holdUntil) this.beginMorph();
     if (this.morphing) {
-      this.morph = Math.min(1, this.morph + dt / MORPH_SEC);
+      this.morph = Math.min(1, this.morph + dt / (MORPH_SEC / this.cfg.speedMultiplier));
       if (this.morph >= 1) {
         this.finishMorph();
         this.holdUntil = now + this.holdFor(this.wordIdx);
@@ -565,12 +565,31 @@ export class BlurGlow {
     }
     this.render(1.0, 0);
   }
-  refreshFont() {
-    this.resolveFont();
-    this.buildMask();
-    this.buildMaskB();
+  /** Apply partial config changes at runtime — live-updates the glow immediately. */
+  updateConfig(patch: Partial<GlowConfig>) {
+    const prev = this.cfg;
+    this.cfg = { ...this.cfg, ...patch };
+
+    const maskDirty =
+      (patch.fontFamily !== undefined && patch.fontFamily !== prev.fontFamily) ||
+      (patch.letterSpacingFactor !== undefined && patch.letterSpacingFactor !== prev.letterSpacingFactor);
+
+    if (maskDirty) {
+      this.buildMask();
+      this.buildMaskB();
+    }
+
+    // Re-upload current palette with possibly new ink colour
+    if (!this.morphing) {
+      const pu = this.phraseUniforms(this.wordIdx);
+      this.paletteFrom = pu;
+      this.paletteTo = pu;
+      this.uploadPalette(pu);
+    }
+
     if (!this.running) this.renderStill();
   }
+
   onResize() {
     this.resize();
     if (!this.running) this.renderStill();

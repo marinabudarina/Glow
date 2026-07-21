@@ -9,6 +9,7 @@ export function makeWordMask(
   w: number,
   h: number,
   fontFamily: string,
+  letterSpacingFactor = 0.015,
 ): WordMask {
   const W = Math.max(1, Math.round(w));
   const H = Math.max(1, Math.round(h));
