@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   typingText: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'JetBrainsMono_400Regular',
     fontSize: 17,
     color: '#3a3050',
-    letterSpacing: 0.3,
+    letterSpacing: 17 * -0.06, // −6%
   },
   cursor: {
-    fontFamily: 'Inter_400Regular',
+    fontFamily: 'JetBrainsMono_400Regular',
     fontSize: 17,
     color: '#5b1fd6',
     marginLeft: 1,
@@ -277,10 +277,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   phraseText: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'JetBrainsMono_700Bold',
     fontSize: 54,
     textAlign: 'center',
-    letterSpacing: -1.5,
+    letterSpacing: 54 * -0.06, // −6%
     lineHeight: 64,
   },
 });
