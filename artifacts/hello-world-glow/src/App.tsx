@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { BlurGlow } from "./blur-glow/engine";
 import type { GlowConfig } from "./blur-glow/config";
 import { DEFAULT_CONFIG } from "./blur-glow/config";
+import {
+  unlockAudio,
+  playTypingClick,
+  playCarriageReturn,
+  playPowerUp,
+  playPhraseBeep,
+} from "./blur-glow/sound";
 
 // ─── Typing animation ────────────────────────────────────────────────────────
 const TYPED_TEXT = `print("Hello, World")`;
@@ -24,16 +31,19 @@ function GlowCanvas({
   visible,
   config,
   engineRef,
+  onWordChange,
 }: {
   visible: boolean;
   config: GlowConfig;
   engineRef: React.MutableRefObject<BlurGlow | null>;
+  onWordChange: (idx: number) => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!hostRef.current) return;
     const engine = new BlurGlow(hostRef.current, config);
+    engine.onWordChange = onWordChange;
     engineRef.current = engine;
 
     if (visible) engine.start();
@@ -68,11 +78,24 @@ export default function App() {
   const config: GlowConfig = DEFAULT_CONFIG;
   const engineRef = useRef<BlurGlow | null>(null);
 
-  // Typing ticker
+  // Unlock audio on first pointer interaction (browser policy)
+  useEffect(() => {
+    window.addEventListener("pointerdown", unlockAudio, { once: true });
+    window.addEventListener("keydown", unlockAudio, { once: true });
+  }, []);
+
+  // Typing ticker — play a click on each new character
   useEffect(() => {
     if (phase !== "typing") return;
-    if (typedCount >= TYPED_TEXT.length) { setPhase("hold"); return; }
-    const id = setTimeout(() => setTypedCount((c) => c + 1), CHAR_MS);
+    if (typedCount >= TYPED_TEXT.length) {
+      playCarriageReturn();
+      setPhase("hold");
+      return;
+    }
+    const id = setTimeout(() => {
+      setTypedCount((c) => c + 1);
+      playTypingClick();
+    }, CHAR_MS);
     return () => clearTimeout(id);
   }, [phase, typedCount]);
 
@@ -86,7 +109,10 @@ export default function App() {
   // FadeOut → glow
   useEffect(() => {
     if (phase !== "fadeOut") return;
-    const id = setTimeout(() => setPhase("glow"), 700);
+    const id = setTimeout(() => {
+      setPhase("glow");
+      playPowerUp();
+    }, 700);
     return () => clearTimeout(id);
   }, [phase]);
 
@@ -98,7 +124,12 @@ export default function App() {
   return (
     <div className="root">
       {/* WebGL glow — mounted immediately but invisible until phase=glow */}
-      <GlowCanvas visible={phase === "glow"} config={config} engineRef={engineRef} />
+      <GlowCanvas
+        visible={phase === "glow"}
+        config={config}
+        engineRef={engineRef}
+        onWordChange={playPhraseBeep}
+      />
 
       {/* Typing overlay */}
       {showTyping && (

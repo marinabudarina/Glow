@@ -63,6 +63,9 @@ export class BlurGlow {
   private lastT = 0;
   private revealed = false;
 
+  /** Called whenever the engine advances to a new word (after the morph finishes). */
+  onWordChange?: (wordIdx: number) => void;
+
   private wordIdx = 0;
   // Play-once sequencing
   private readonly LOOP_START = 4; // "and I'm not" — loop begins here
@@ -367,6 +370,7 @@ export class BlurGlow {
     this.buildMaskB(); // prep the texture for the word after next
     this.paletteFrom = this.paletteTo;
     this.uploadPalette(this.paletteTo);
+    this.onWordChange?.(this.wordIdx);
   }
 
   private render(bloom: number, phase: number) {
