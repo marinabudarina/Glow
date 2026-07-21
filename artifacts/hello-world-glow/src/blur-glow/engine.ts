@@ -62,7 +62,9 @@ export class BlurGlow {
   private revealed = false;
 
   private wordIdx = 0;
-  private paletteIdx = 0;
+  // Play-once sequencing
+  private readonly LOOP_START = 4; // "and I'm not" — loop begins here
+  private playedOnce = false;
   private morph = 0;
   private morphEased = 0;
   private morphGlow = 0;
@@ -303,10 +305,18 @@ export class BlurGlow {
     this.focusA = [m.x0, m.x1];
   }
 
+  private nextWordIdx(): number {
+    if (this.playedOnce || this.wordIdx === WORDS.length - 1) {
+      // Loop between LOOP_START and LOOP_START+1
+      return this.wordIdx === this.LOOP_START ? this.LOOP_START + 1 : this.LOOP_START;
+    }
+    return this.wordIdx + 1;
+  }
+
   private buildMaskB() {
     const gl = this.gl;
     if (!gl) return;
-    const next = (this.wordIdx + 1) % WORDS.length;
+    const next = this.nextWordIdx();
     const m = makeWordMask(WORDS[next], this.canvas.width, this.canvas.height, this.fontFamily);
     this.maskB = this.uploadMask(m.canvas, this.maskB);
     this.focusB = [m.x0, m.x1];
@@ -327,25 +337,34 @@ export class BlurGlow {
     this.buildMask();
     this.buildMaskB();
 
-    if (!this.morphing) this.applyPalette(this.paletteIdx);
+    if (!this.morphing) this.applyPalette(this.wordIdx);
   }
 
   private beginMorph() {
     this.morph = 0;
     this.morphing = true;
-    this.paletteFrom = paletteUniforms(PALETTES[this.paletteIdx % PALETTES.length]);
-    this.paletteTo = paletteUniforms(PALETTES[(this.paletteIdx + 1) % PALETTES.length]);
+    // Palette is 1-to-1 with word index
+    this.paletteFrom = paletteUniforms(PALETTES[this.wordIdx]);
+    this.paletteTo = paletteUniforms(PALETTES[this.nextWordIdx()]);
   }
   private finishMorph() {
-    this.wordIdx = (this.wordIdx + 1) % WORDS.length;
+    // If we just finished showing "an AI ;P" for the first time, mark the run complete
+    if (!this.playedOnce && this.wordIdx === WORDS.length - 1) {
+      this.playedOnce = true;
+    }
+
+    const next = this.nextWordIdx();
+
+    // Swap textures: B becomes the new A
     const t = this.maskA;
     this.maskA = this.maskB;
     this.maskB = t;
     this.focusA = this.focusB;
     this.morph = 0;
     this.morphing = false;
-    this.buildMaskB();
-    this.paletteIdx = (this.paletteIdx + 1) % PALETTES.length;
+
+    this.wordIdx = next;
+    this.buildMaskB(); // prep the texture for the word after next
     this.paletteFrom = this.paletteTo;
     this.uploadPalette(this.paletteTo);
   }

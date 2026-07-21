@@ -153,10 +153,26 @@ export function lerpPaletteUniforms(
   };
 }
 
-// The two words the glow cycles through
-export const WORDS = ["Hello,", "World!"];
+// Six-phrase personal intro — plays once through, then loops on the last two
+export const WORDS = [
+  "Hello,",
+  "World!",
+  "My name",
+  "is Marina",
+  "and I'm not",
+  "an AI ;P",
+];
 
-export const HOLD_SCALE = [1.6, 1.6];
+// Hold multiplier per phrase (× HOLD_MS in engine).
+// Indices match WORDS above.
+export const HOLD_SCALE = [
+  0.9,  // Hello,        — quick greeting
+  1.1,  // World!        — medium
+  0.85, // My name       — short, building momentum
+  1.8,  // is Marina     — long pause: let the name land
+  1.2,  // and I'm not   — medium, a little suspense
+  2.2,  // an AI ;P      — longest hold, then loops here
+];
 
 export const GRAIN = 0.4;
 
