@@ -79,14 +79,14 @@ export default function ConfigPanel({ open, config, onChange, onClose }: Props) 
         <div className="cfg-row">
           <span className="cfg-hint">Tight</span>
           <input
-            type="range" min="0" max="0.08" step="0.002"
+            type="range" min="-0.06" max="0.08" step="0.002"
             value={config.letterSpacingFactor}
             onChange={e => onChange({ letterSpacingFactor: parseFloat(e.target.value) })}
             className="cfg-slider"
           />
           <span className="cfg-hint">Wide</span>
         </div>
-        <div className="cfg-value">{(config.letterSpacingFactor * 1000).toFixed(0)} / 1000 em</div>
+        <div className="cfg-value">{config.letterSpacingFactor >= 0 ? "+" : ""}{(config.letterSpacingFactor * 100).toFixed(1)}%</div>
       </section>
 
       {/* ── Phrase colors ────────────────────────────────── */}

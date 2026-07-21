@@ -41,7 +41,7 @@ export function makeWordMask(
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
 
-  const ls = size * 0.015;
+  const ls = size * letterSpacingFactor;
   const chars = [...text];
   const widths = chars.map((c) => ctx.measureText(c).width);
   const total = widths.reduce((a, b) => a + b, 0) + ls * (chars.length - 1);

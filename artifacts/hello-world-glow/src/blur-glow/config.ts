@@ -22,9 +22,9 @@ export const DEFAULT_INK_COLORS: string[] = [
 ];
 
 export const DEFAULT_CONFIG: GlowConfig = {
-  speedMultiplier: 1.0,
+  speedMultiplier: 0.75,
   fontFamily: "Inter",
-  letterSpacingFactor: 0.015,
+  letterSpacingFactor: -0.03,
   phraseInkColors: DEFAULT_INK_COLORS.slice(0, WORDS.length),
 };
 
