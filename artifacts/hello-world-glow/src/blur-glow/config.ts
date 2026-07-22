@@ -9,6 +9,8 @@ export interface GlowConfig {
   letterSpacingFactor: number;
   /** Per-phrase ink (letter body) colour as hex strings — length === WORDS.length */
   phraseInkColors: string[];
+  /** Override the word list — if provided, replaces the default WORDS array */
+  words?: string[];
 }
 
 // Default ink colours match each palette's ink

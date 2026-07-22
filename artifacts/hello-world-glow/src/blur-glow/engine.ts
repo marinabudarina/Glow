@@ -300,18 +300,25 @@ export class BlurGlow {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     return tex;
   }
+  private get words(): string[] {
+    return this.cfg.words ?? WORDS;
+  }
+
   private buildMask() {
     const gl = this.gl;
     if (!gl) return;
-    const m = makeWordMask(WORDS[this.wordIdx % WORDS.length], this.canvas.width, this.canvas.height, this.cfg.fontFamily, this.cfg.letterSpacingFactor);
+    const m = makeWordMask(this.words[this.wordIdx % this.words.length], this.canvas.width, this.canvas.height, this.cfg.fontFamily, this.cfg.letterSpacingFactor);
     this.maskA = this.uploadMask(m.canvas, this.maskA);
     this.focusA = [m.x0, m.x1];
   }
 
   private nextWordIdx(): number {
-    if (this.playedOnce || this.wordIdx === WORDS.length - 1) {
-      // Loop between LOOP_START and LOOP_START+1
-      return this.wordIdx === this.LOOP_START ? this.LOOP_START + 1 : this.LOOP_START;
+    const words = this.words;
+    if (this.playedOnce || this.wordIdx === words.length - 1) {
+      // Loop between LOOP_START and LOOP_START+1 (or stay on last if only one word)
+      if (words.length === 1) return 0;
+      const loopStart = Math.min(this.LOOP_START, words.length - 2);
+      return this.wordIdx === loopStart ? loopStart + 1 : loopStart;
     }
     return this.wordIdx + 1;
   }
@@ -320,7 +327,7 @@ export class BlurGlow {
     const gl = this.gl;
     if (!gl) return;
     const next = this.nextWordIdx();
-    const m = makeWordMask(WORDS[next], this.canvas.width, this.canvas.height, this.cfg.fontFamily, this.cfg.letterSpacingFactor);
+    const m = makeWordMask(this.words[next], this.canvas.width, this.canvas.height, this.cfg.fontFamily, this.cfg.letterSpacingFactor);
     this.maskB = this.uploadMask(m.canvas, this.maskB);
     this.focusB = [m.x0, m.x1];
   }
@@ -484,7 +491,7 @@ export class BlurGlow {
   }
 
   private holdFor(i: number) {
-    return HOLD_MS * (HOLD_SCALE[i % WORDS.length] ?? 1) / this.cfg.speedMultiplier;
+    return HOLD_MS * (HOLD_SCALE[i % this.words.length] ?? 1) / this.cfg.speedMultiplier;
   }
 
   private frame = (now: number) => {

@@ -73,5 +73,9 @@
     "vite": "catalog:",
     "wouter": "^3.3.5",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "@splinetool/react-spline": "^4.1.0",
+    "@splinetool/runtime": "^1.12.98"
   }
 }

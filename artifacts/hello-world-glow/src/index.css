@@ -34,51 +34,123 @@ body {
   height: 100%;
 }
 
-/* ── Typing overlay ───────────────────────────────────── */
-.typing-overlay {
+/* ── Input overlay ───────────────────────────────────── */
+.input-overlay {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: #faf7ff;
   z-index: 10;
-}
-
-.typing-line {
-  display: flex;
-  align-items: center;
   gap: 0;
 }
 
-.typing-text {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: clamp(13px, 2vw, 22px);
+/* Typed text display */
+.typed-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  margin-bottom: 12px;
+  padding: 0 24px;
+}
+
+.typed-placeholder {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(18px, 2.8vw, 36px);
   font-weight: 400;
+  color: rgba(58, 48, 80, 0.22);
   letter-spacing: 0.01em;
+  user-select: none;
+}
+
+.typed-chars {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(18px, 2.8vw, 36px);
+  font-weight: 400;
   color: #3a3050;
+  letter-spacing: 0.01em;
   white-space: pre;
 }
 
-/* Cursor */
-.cursor {
+.typed-cursor {
   display: inline-block;
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(13px, 2vw, 22px);
+  font-size: clamp(18px, 2.8vw, 36px);
   color: #5b1fd6;
-  margin-left: 1px;
+  margin-left: 2px;
   line-height: 1;
   position: relative;
   top: 0.04em;
-}
-
-.cursor-blink {
   animation: blink 0.9s step-end infinite;
 }
 
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
+}
+
+/* Spline keyboard container */
+.spline-wrap {
+  width: min(680px, 90vw);
+  height: min(380px, 48vw);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.spline-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Enter hint */
+.enter-hint {
+  margin-top: 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(11px, 1.3vw, 14px);
+  color: rgba(58, 48, 80, 0.38);
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.enter-hint kbd {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  background: rgba(58, 48, 80, 0.06);
+  border: 1px solid rgba(58, 48, 80, 0.15);
+  border-radius: 4px;
+  padding: 1px 6px 2px;
+  color: rgba(58, 48, 80, 0.5);
+}
+
+/* Spline fallback (no GPU / WebGL unavailable) */
+.spline-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(60px, 12vw, 140px);
+  opacity: 0.25;
+  user-select: none;
+}
+
+/* Hidden input — captures keystrokes invisibly */
+.hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  top: -9999px;
+  left: -9999px;
+  border: none;
+  outline: none;
+  background: transparent;
 }
 
 /* ── Config button ───────────────────────────────────────── */

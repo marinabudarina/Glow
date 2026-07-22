@@ -1,23 +1,36 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, Component } from "react";
+import type { ReactNode, ErrorInfo } from "react";
+import Spline from "@splinetool/react-spline";
 import { BlurGlow } from "./blur-glow/engine";
 import type { GlowConfig } from "./blur-glow/config";
 import { DEFAULT_CONFIG } from "./blur-glow/config";
 
-// ─── Typing animation ────────────────────────────────────────────────────────
-const TYPED_TEXT = `print("Hello, World")`;
-const CHAR_MS = 62;
-const HOLD_AFTER_MS = 900;
-
-type Phase = "typing" | "hold" | "fadeOut" | "glow";
-
-function TypingLine({ text, done }: { text: string; done: boolean }) {
-  return (
-    <div className="typing-line">
-      <span className="typing-text">{text}</span>
-      <span className={`cursor${done ? " cursor-blink" : ""}`}>▍</span>
-    </div>
-  );
+// ─── Spline error boundary ───────────────────────────────────────────────────
+class SplineErrorBoundary extends Component<
+  { children: ReactNode; fallback?: ReactNode },
+  { error: boolean }
+> {
+  constructor(props: { children: ReactNode; fallback?: ReactNode }) {
+    super(props);
+    this.state = { error: false };
+  }
+  static getDerivedStateFromError() {
+    return { error: true };
+  }
+  componentDidCatch(_err: Error, _info: ErrorInfo) {
+    // silently swallow — WebGL unavailable in some environments
+  }
+  render() {
+    if (this.state.error) {
+      return this.props.fallback ?? (
+        <div className="spline-fallback">⌨️</div>
+      );
+    }
+    return this.props.children;
+  }
 }
+
+type Phase = "input" | "fadeOut" | "glow";
 
 // ─── WebGL glow canvas ───────────────────────────────────────────────────────
 function GlowCanvas({
@@ -35,9 +48,7 @@ function GlowCanvas({
     if (!hostRef.current) return;
     const engine = new BlurGlow(hostRef.current, config);
     engineRef.current = engine;
-
     if (visible) engine.start();
-
     const onResize = () => engine.onResize();
     window.addEventListener("resize", onResize);
     return () => {
@@ -63,47 +74,95 @@ function GlowCanvas({
 
 // ─── Main app ────────────────────────────────────────────────────────────────
 export default function App() {
-  const [phase, setPhase] = useState<Phase>("typing");
-  const [typedCount, setTypedCount] = useState(0);
-  const config: GlowConfig = DEFAULT_CONFIG;
+  const [phase, setPhase] = useState<Phase>("input");
+  const [typed, setTyped] = useState("");
+  const [glowConfig, setGlowConfig] = useState<GlowConfig>(DEFAULT_CONFIG);
   const engineRef = useRef<BlurGlow | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Typing ticker
+  // Focus the hidden input on mount
   useEffect(() => {
-    if (phase !== "typing") return;
-    if (typedCount >= TYPED_TEXT.length) { setPhase("hold"); return; }
-    const id = setTimeout(() => setTypedCount((c) => c + 1), CHAR_MS);
-    return () => clearTimeout(id);
-  }, [phase, typedCount]);
-
-  // Hold → fadeOut
-  useEffect(() => {
-    if (phase !== "hold") return;
-    const id = setTimeout(() => setPhase("fadeOut"), HOLD_AFTER_MS);
-    return () => clearTimeout(id);
+    if (phase === "input") {
+      inputRef.current?.focus();
+    }
   }, [phase]);
 
-  // FadeOut → glow
-  useEffect(() => {
-    if (phase !== "fadeOut") return;
-    const id = setTimeout(() => setPhase("glow"), 700);
-    return () => clearTimeout(id);
-  }, [phase]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && typed.trim().length > 0) {
+        const words = [typed.trim()];
+        setGlowConfig({
+          ...DEFAULT_CONFIG,
+          words,
+          phraseInkColors: ["#2a0f66"],
+        });
+        setPhase("fadeOut");
+        setTimeout(() => setPhase("glow"), 650);
+      }
+    },
+    [typed]
+  );
 
-  const displayedText = TYPED_TEXT.slice(0, typedCount);
-  const fullyTyped = typedCount >= TYPED_TEXT.length;
-  const showTyping = phase === "typing" || phase === "hold" || phase === "fadeOut";
-  const typingOpacity = phase === "fadeOut" ? 0 : 1;
+  const handleOverlayClick = () => {
+    inputRef.current?.focus();
+  };
+
+  const isInputPhase = phase === "input" || phase === "fadeOut";
+  const inputOpacity = phase === "fadeOut" ? 0 : 1;
 
   return (
-    <div className="root">
-      <GlowCanvas visible={phase === "glow"} config={config} engineRef={engineRef} />
-      {showTyping && (
+    <div className="root" onClick={handleOverlayClick}>
+      {/* Glow layer — always mounted so it's ready */}
+      <GlowCanvas
+        visible={phase === "glow"}
+        config={glowConfig}
+        engineRef={engineRef}
+      />
+
+      {/* Input phase overlay */}
+      {isInputPhase && (
         <div
-          className="typing-overlay"
-          style={{ opacity: typingOpacity, transition: "opacity 0.7s ease" }}
+          className="input-overlay"
+          style={{
+            opacity: inputOpacity,
+            transition: "opacity 0.6s ease",
+          }}
         >
-          <TypingLine text={displayedText} done={fullyTyped} />
+          {/* Typed text display */}
+          <div className="typed-display">
+            {typed.length === 0 ? (
+              <span className="typed-placeholder">Start typing…</span>
+            ) : (
+              <span className="typed-chars">{typed}</span>
+            )}
+            <span className="typed-cursor">▍</span>
+          </div>
+
+          {/* Spline 3D keyboard */}
+          <div className="spline-wrap">
+            <SplineErrorBoundary
+              fallback={<div className="spline-fallback">⌨️</div>}
+            >
+              <Spline scene="https://prod.spline.design/H1LvhYkNlE0G22dJ/scene.splinecode" />
+            </SplineErrorBoundary>
+          </div>
+
+          {/* Hint */}
+          <p className="enter-hint">
+            Press <kbd>Enter</kbd> to continue
+          </p>
+
+          {/* Hidden real input to capture keystrokes */}
+          <input
+            ref={inputRef}
+            className="hidden-input"
+            value={typed}
+            onChange={(e) => setTyped(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            autoComplete="off"
+            spellCheck={false}
+          />
         </div>
       )}
     </div>
