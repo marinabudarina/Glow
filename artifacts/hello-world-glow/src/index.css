@@ -75,12 +75,30 @@ body {
   white-space: pre;
 }
 
+.typed-prefix {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(18px, 2.8vw, 36px);
+  font-weight: 400;
+  color: rgba(58, 48, 80, 0.45);
+  letter-spacing: 0.01em;
+  white-space: pre;
+  user-select: none;
+}
+
+.typed-quote {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(18px, 2.8vw, 36px);
+  font-weight: 400;
+  color: rgba(58, 48, 80, 0.55);
+  user-select: none;
+}
+
 .typed-cursor {
   display: inline-block;
   font-family: 'JetBrains Mono', monospace;
   font-size: clamp(18px, 2.8vw, 36px);
-  color: #5b1fd6;
-  margin-left: 2px;
+  color: #3a3050;
+  margin-left: 1px;
   line-height: 1;
   position: relative;
   top: 0.04em;
@@ -92,18 +110,26 @@ body {
   50%       { opacity: 0; }
 }
 
-/* Spline keyboard container */
+/* Spline keyboard container — full viewport width, fixed height, no cropping */
 .spline-wrap {
-  width: min(680px, 90vw);
-  height: min(380px, 48vw);
+  width: 100vw;
+  height: clamp(280px, 44vh, 500px);
   flex-shrink: 0;
   position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Disable all camera interaction — no zoom, pan, or scroll */
+.spline-wrap > * {
+  pointer-events: none !important;
 }
 
 .spline-wrap canvas {
-  width: 100% !important;
-  height: 100% !important;
+  display: block;
+  pointer-events: none !important;
 }
 
 /* Enter hint */

@@ -90,7 +90,8 @@ export default function App() {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" && typed.trim().length > 0) {
-        const words = [typed.trim()];
+        const phrase = `print("${typed.trim()}")`;
+        const words = [phrase];
         setGlowConfig({
           ...DEFAULT_CONFIG,
           words,
@@ -130,12 +131,16 @@ export default function App() {
         >
           {/* Typed text display */}
           <div className="typed-display">
+            <span className="typed-prefix">print(</span>
+            <span className="typed-quote">"</span>
             {typed.length === 0 ? (
-              <span className="typed-placeholder">Start typing…</span>
+              <span className="typed-placeholder">type something</span>
             ) : (
               <span className="typed-chars">{typed}</span>
             )}
             <span className="typed-cursor">▍</span>
+            <span className="typed-quote">"</span>
+            <span className="typed-prefix">)</span>
           </div>
 
           {/* Spline 3D keyboard */}
