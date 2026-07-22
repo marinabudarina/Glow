@@ -118,10 +118,10 @@ body {
   50%       { opacity: 0; }
 }
 
-/* Spline keyboard container — full width, tall enough to show entire scene */
+/* Spline keyboard container */
 .spline-wrap {
-  width: 100vw;
-  height: 52vh;
+  width: min(900px, 88vw);
+  height: min(450px, 44vw);
   flex-shrink: 0;
   position: relative;
   overflow: visible;
