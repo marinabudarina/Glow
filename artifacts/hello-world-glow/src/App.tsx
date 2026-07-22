@@ -73,12 +73,32 @@ function GlowCanvas({
 }
 
 // ─── Main app ────────────────────────────────────────────────────────────────
+const CANVAS_W = 1300;
+const CANVAS_H = 650;
+
+function useSplineScale() {
+  const [scale, setScale] = useState(() => {
+    const visual = Math.min(900, window.innerWidth * 0.88);
+    return visual / CANVAS_W;
+  });
+  useEffect(() => {
+    const update = () => {
+      const visual = Math.min(900, window.innerWidth * 0.88);
+      setScale(visual / CANVAS_W);
+    };
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return scale;
+}
+
 export default function App() {
   const [phase, setPhase] = useState<Phase>("input");
   const [typed, setTyped] = useState("");
   const [glowConfig, setGlowConfig] = useState<GlowConfig>(DEFAULT_CONFIG);
   const engineRef = useRef<BlurGlow | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const splineScale = useSplineScale();
 
   // Focus the hidden input on mount
   useEffect(() => {
@@ -143,9 +163,18 @@ export default function App() {
             <span className="typed-prefix">)</span>
           </div>
 
-          {/* Spline 3D keyboard — rendered large, scaled down so full scene is visible */}
-          <div className="spline-wrap">
-            <div className="spline-scaler">
+          {/* Spline 3D keyboard — canvas at 1300×650 so camera sees full keyboard,
+               scaled down via JS so it always fits the actual viewport width */}
+          <div
+            className="spline-wrap"
+            style={{ width: CANVAS_W * splineScale, height: CANVAS_H * splineScale }}
+          >
+            <div
+              className="spline-scaler"
+              style={{
+                transform: `translate(-50%, -50%) scale(${splineScale})`,
+              }}
+            >
               <SplineErrorBoundary
                 fallback={<div className="spline-fallback">⌨️</div>}
               >
