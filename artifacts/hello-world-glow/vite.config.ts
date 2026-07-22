@@ -56,6 +56,8 @@ export default defineConfig({
         '..',
         'attached_assets',
       ),
+      // stub next/image so @splinetool/react-spline/next can be used in Vite
+      'next/image': path.resolve(import.meta.dirname, 'src/stubs/next-image.tsx'),
     },
     dedupe: ['react', 'react-dom'],
   },

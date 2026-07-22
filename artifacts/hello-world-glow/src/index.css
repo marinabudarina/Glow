@@ -13,7 +13,7 @@ html, body, #root {
 }
 
 body {
-  background: #faf7ff;
+  background: #F2F2F2;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -23,7 +23,7 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  background: #faf7ff;
+  background: #F2F2F2;
 }
 
 /* ── WebGL host ───────────────────────────────────────── */
@@ -42,7 +42,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #faf7ff;
+  background: #F2F2F2;
   z-index: 10;
   gap: 0;
 }
