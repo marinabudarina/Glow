@@ -143,13 +143,15 @@ export default function App() {
             <span className="typed-prefix">)</span>
           </div>
 
-          {/* Spline 3D keyboard */}
+          {/* Spline 3D keyboard — rendered large, scaled down so full scene is visible */}
           <div className="spline-wrap">
-            <SplineErrorBoundary
-              fallback={<div className="spline-fallback">⌨️</div>}
-            >
-              <Spline scene="https://prod.spline.design/H1LvhYkNlE0G22dJ/scene.splinecode" />
-            </SplineErrorBoundary>
+            <div className="spline-scaler">
+              <SplineErrorBoundary
+                fallback={<div className="spline-fallback">⌨️</div>}
+              >
+                <Spline scene="https://prod.spline.design/H1LvhYkNlE0G22dJ/scene.splinecode" />
+              </SplineErrorBoundary>
+            </div>
           </div>
 
           {/* Hint */}
