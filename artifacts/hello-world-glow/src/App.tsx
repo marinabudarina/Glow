@@ -157,9 +157,9 @@ export default function App() {
         >
           {/* Typed text display */}
           <div className="typed-display">
-            {!hasContent ? (
-              <span className="typed-placeholder">type something</span>
-            ) : (
+            <span className="typed-prefix">print(</span>
+            <span className="typed-quote">"</span>
+            {hasContent && (
               <>
                 {segments.map((seg, i) => (
                   <span key={i} className="typed-segment">
@@ -171,6 +171,8 @@ export default function App() {
               </>
             )}
             <span className="typed-cursor">▍</span>
+            <span className="typed-quote">"</span>
+            <span className="typed-prefix">)</span>
           </div>
 
           {/* Spline 3D keyboard */}
