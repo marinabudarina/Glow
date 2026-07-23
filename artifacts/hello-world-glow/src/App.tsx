@@ -90,10 +90,9 @@ export default function App() {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" && typed.trim().length > 0) {
-        const phrase = `print("${typed.trim()}")`;
-        // Configure the engine with the typed phrase before it becomes visible
+        // Configure the engine with the raw typed text
         engineRef.current?.configure({
-          words: [phrase],
+          words: [typed.trim()],
           phraseInkColors: ["#2a0f66"],
         });
         setPhase("fadeOut");
@@ -130,16 +129,12 @@ export default function App() {
         >
           {/* Typed text display */}
           <div className="typed-display">
-            <span className="typed-prefix">print(</span>
-            <span className="typed-quote">"</span>
             {typed.length === 0 ? (
               <span className="typed-placeholder">type something</span>
             ) : (
               <span className="typed-chars">{typed}</span>
             )}
             <span className="typed-cursor">▍</span>
-            <span className="typed-quote">"</span>
-            <span className="typed-prefix">)</span>
           </div>
 
           {/* Spline 3D keyboard */}

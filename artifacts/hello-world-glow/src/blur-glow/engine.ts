@@ -557,11 +557,16 @@ export class BlurGlow {
 
   configure(cfg: Partial<GlowConfig>) {
     this.cfg = { ...this.cfg, ...cfg };
-    // Reset word sequencing so the new words start fresh
     this.wordIdx = 0;
     this.playedOnce = false;
     this.morphing = false;
     this.holdUntil = 0;
+    // Rebuild word textures immediately if the canvas is already sized
+    if (this.canvas.width > 1 && this.gl) {
+      this.buildMask();
+      this.buildMaskB();
+      this.applyPalette(0);
+    }
   }
 
   start() {
