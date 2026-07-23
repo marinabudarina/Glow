@@ -184,7 +184,7 @@ export const CAST_STEP: readonly [number, number, number, number] = [0.0008, 0.0
 
 export const LETTER_SPREAD = 0.45;
 
-export const WARP_RADIUS = 0.8;
+export const WARP_RADIUS = 0.35;
 export const WARP_AMP = 0.013;
 export const WARP_SWIRL = 0.6;
 
