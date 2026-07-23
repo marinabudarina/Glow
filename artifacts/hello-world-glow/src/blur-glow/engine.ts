@@ -314,8 +314,13 @@ export class BlurGlow {
 
   private nextWordIdx(): number {
     const words = this.words;
+    // Custom words always cycle sequentially through all entries (wrap-around)
+    // so every palette is used on every pass regardless of word count.
+    if (this.cfg.words) {
+      return (this.wordIdx + 1) % words.length;
+    }
+    // Default WORDS: play once through, then loop on the last two phrases
     if (this.playedOnce || this.wordIdx === words.length - 1) {
-      // Loop between LOOP_START and LOOP_START+1 (or stay on last if only one word)
       if (words.length === 1) return 0;
       const loopStart = Math.min(this.LOOP_START, words.length - 2);
       return this.wordIdx === loopStart ? loopStart + 1 : loopStart;

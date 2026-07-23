@@ -85,6 +85,22 @@ body {
   white-space: pre;
 }
 
+/* Committed phrase segment (before a ".") */
+.typed-segment {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(18px, 2.8vw, 36px);
+  font-weight: 400;
+  color: rgba(58, 48, 80, 0.38);
+  letter-spacing: 0.01em;
+  white-space: pre;
+}
+
+/* The "." separator between segments */
+.typed-dot {
+  color: rgba(58, 48, 80, 0.22);
+  margin: 0 0.08em;
+}
+
 .typed-prefix {
   font-family: 'JetBrains Mono', monospace;
   font-size: clamp(18px, 2.8vw, 36px);

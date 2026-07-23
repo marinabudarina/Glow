@@ -3,7 +3,7 @@ import type { ReactNode, ErrorInfo } from "react";
 import Spline from "@splinetool/react-spline";
 import { BlurGlow } from "./blur-glow/engine";
 import type { GlowConfig } from "./blur-glow/config";
-import { DEFAULT_CONFIG } from "./blur-glow/config";
+import { DEFAULT_CONFIG, DEFAULT_INK_COLORS } from "./blur-glow/config";
 
 // ─── Spline error boundary ───────────────────────────────────────────────────
 class SplineErrorBoundary extends Component<
@@ -75,31 +75,58 @@ function GlowCanvas({
 // ─── Main app ────────────────────────────────────────────────────────────────
 export default function App() {
   const [phase, setPhase] = useState<Phase>("input");
-  const [typed, setTyped] = useState("");
-  const [glowConfig, setGlowConfig] = useState<GlowConfig>(DEFAULT_CONFIG);
+  // segments = committed phrases (typed before a "."); current = what's being typed now
+  const [segments, setSegments] = useState<string[]>([]);
+  const [current, setCurrent] = useState("");
   const engineRef = useRef<BlurGlow | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Focus the hidden input on mount
+  // Focus hidden input whenever we're in the input phase
   useEffect(() => {
     if (phase === "input") {
       inputRef.current?.focus();
     }
   }, [phase]);
 
+  // onChange — intercept "." to commit the current segment
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val.endsWith(".")) {
+      const trimmed = val.slice(0, -1).trim();
+      if (trimmed) {
+        setSegments((prev) => [...prev, trimmed]);
+      }
+      setCurrent("");
+    } else {
+      setCurrent(val);
+    }
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" && typed.trim().length > 0) {
-        // Configure the engine with the raw typed text
+      if (e.key === "Enter") {
+        const allWords = [...segments, current.trim()].filter(Boolean);
+        if (allWords.length === 0) return;
+
+        let words: string[];
+
+        if (allWords.length === 1) {
+          // Single phrase: repeat 6 times so all palettes cycle on every pass
+          words = Array(6).fill(allWords[0]);
+        } else {
+          words = allWords;
+        }
+
+        // Always use all 6 ink colours so every palette slot gets its matching ink
         engineRef.current?.configure({
-          words: [typed.trim()],
-          phraseInkColors: ["#2a0f66"],
+          words,
+          phraseInkColors: DEFAULT_INK_COLORS,
         });
         setPhase("fadeOut");
         setTimeout(() => setPhase("glow"), 650);
       }
     },
-    [typed]
+    [segments, current]
   );
 
   const handleOverlayClick = () => {
@@ -108,13 +135,14 @@ export default function App() {
 
   const isInputPhase = phase === "input" || phase === "fadeOut";
   const inputOpacity = phase === "fadeOut" ? 0 : 1;
+  const hasContent = segments.length > 0 || current.length > 0;
 
   return (
     <div className="root" onClick={handleOverlayClick}>
       {/* Glow layer — always mounted so it's ready */}
       <GlowCanvas
         visible={phase === "glow"}
-        config={glowConfig}
+        config={DEFAULT_CONFIG}
         engineRef={engineRef}
       />
 
@@ -129,10 +157,18 @@ export default function App() {
         >
           {/* Typed text display */}
           <div className="typed-display">
-            {typed.length === 0 ? (
+            {!hasContent ? (
               <span className="typed-placeholder">type something</span>
             ) : (
-              <span className="typed-chars">{typed}</span>
+              <>
+                {segments.map((seg, i) => (
+                  <span key={i} className="typed-segment">
+                    {seg}
+                    <span className="typed-dot">.</span>
+                  </span>
+                ))}
+                <span className="typed-chars">{current}</span>
+              </>
             )}
             <span className="typed-cursor">▍</span>
           </div>
@@ -148,15 +184,15 @@ export default function App() {
 
           {/* Hint */}
           <p className="enter-hint">
-            Press <kbd>Enter</kbd> to continue
+            Press <kbd>.</kbd> to add a phrase · <kbd>Enter</kbd> to glow
           </p>
 
           {/* Hidden real input to capture keystrokes */}
           <input
             ref={inputRef}
             className="hidden-input"
-            value={typed}
-            onChange={(e) => setTyped(e.target.value)}
+            value={current}
+            onChange={handleChange}
             onKeyDown={handleKeyDown}
             autoFocus
             autoComplete="off"
