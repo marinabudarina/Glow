@@ -359,7 +359,7 @@ export class BlurGlow {
   }
   private finishMorph() {
     // If we just finished showing "an AI ;P" for the first time, mark the run complete
-    if (!this.playedOnce && this.wordIdx === WORDS.length - 1) {
+    if (!this.playedOnce && this.wordIdx === this.words.length - 1) {
       this.playedOnce = true;
     }
 
@@ -524,7 +524,8 @@ export class BlurGlow {
       this.velY = (this.velY / vmag) * VMAX;
     }
 
-    if (!this.morphing && now >= this.holdUntil) this.beginMorph();
+    // Don't morph when there is only one word — hold it forever
+    if (!this.morphing && this.words.length > 1 && now >= this.holdUntil) this.beginMorph();
     if (this.morphing) {
       this.morph = Math.min(1, this.morph + dt / (MORPH_SEC / this.cfg.speedMultiplier));
       if (this.morph >= 1) {
