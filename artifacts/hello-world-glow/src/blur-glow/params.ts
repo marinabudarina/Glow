@@ -21,10 +21,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#5b1fd6") },
       { pos: 0.46, color: rgb("#ff3bd4") },
       { pos: 0.72, color: rgb("#ffcf4d") },
-      { pos: 1.0, color: rgb("#e0d4ff") },
+      { pos: 1.0, color: rgb("#fff0d8") },
     ],
     ink: rgb("#2a0f66"),
-    paper: rgb("#e0d4ff"),
+    paper: rgb("#fff0d8"),
   },
   {
     name: "Molten",
@@ -176,8 +176,8 @@ export const HOLD_SCALE = [
 
 export const GRAIN = 0.4;
 
-export const MORPH_LEAD = 0.78;
-export const MORPH_LAG = 1.3;
+export const MORPH_LEAD = 0.92;
+export const MORPH_LAG = 1.08;
 
 export const CAST_DIR: readonly [number, number] = [0.38, 0.92];
 export const CAST_STEP: readonly [number, number, number, number] = [0.0008, 0.0022, 0.0042, 0.0075];

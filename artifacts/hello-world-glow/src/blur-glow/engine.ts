@@ -25,7 +25,7 @@ import { DEFAULT_CONFIG } from "./config";
 
 const FOCUS_AMT = 1.5;
 
-const MORPH_SEC = 0.8;
+const MORPH_SEC = 1.6;
 const HOLD_MS = 1200;
 
 const LEVELS = [
@@ -84,8 +84,8 @@ export class BlurGlow {
   private curY = 0.5;
   private tgtX = 0.5;
   private tgtY = 0.5;
-  private curOn = 1;
-  private tgtOn = 1;
+  private curOn = 0.55;
+  private tgtOn = 0.55;
 
   private velX = 0;
   private velY = 0;
@@ -558,7 +558,7 @@ export class BlurGlow {
     this.tgtOn = 1;
   };
   private onLeave = () => {
-    this.tgtOn = 1; // keep fully on — saturation effect is always active
+    this.tgtOn = 0.55; // baseline saturation — always on, but leaves room for hover boost
   };
 
   configure(cfg: Partial<GlowConfig>) {
