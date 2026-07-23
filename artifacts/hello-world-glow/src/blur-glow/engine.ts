@@ -84,8 +84,8 @@ export class BlurGlow {
   private curY = 0.5;
   private tgtX = 0.5;
   private tgtY = 0.5;
-  private curOn = 0;
-  private tgtOn = 0;
+  private curOn = 1;
+  private tgtOn = 1;
 
   private velX = 0;
   private velY = 0;
@@ -558,7 +558,7 @@ export class BlurGlow {
     this.tgtOn = 1;
   };
   private onLeave = () => {
-    this.tgtOn = 0;
+    this.tgtOn = 1; // keep fully on — saturation effect is always active
   };
 
   configure(cfg: Partial<GlowConfig>) {

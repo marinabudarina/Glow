@@ -21,10 +21,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#5b1fd6") },
       { pos: 0.46, color: rgb("#ff3bd4") },
       { pos: 0.72, color: rgb("#ffcf4d") },
-      { pos: 1.0, color: rgb("#faf7ff") },
+      { pos: 1.0, color: rgb("#e0d4ff") },
     ],
     ink: rgb("#2a0f66"),
-    paper: rgb("#faf7ff"),
+    paper: rgb("#e0d4ff"),
   },
   {
     name: "Molten",
@@ -33,10 +33,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#d21414") },
       { pos: 0.46, color: rgb("#ff6a1f") },
       { pos: 0.72, color: rgb("#ffcf52") },
-      { pos: 1.0, color: rgb("#fff7ec") },
+      { pos: 1.0, color: rgb("#ffe4c8") },
     ],
     ink: rgb("#7a1410"),
-    paper: rgb("#fff7ec"),
+    paper: rgb("#ffe4c8"),
   },
   {
     name: "Bubblegum",
@@ -45,10 +45,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#ff1e8e") },
       { pos: 0.46, color: rgb("#ff7ab0") },
       { pos: 0.72, color: rgb("#ffe0b0") },
-      { pos: 1.0, color: rgb("#fff5fa") },
+      { pos: 1.0, color: rgb("#ffd8f0") },
     ],
     ink: rgb("#8a0e52"),
-    paper: rgb("#fff5fa"),
+    paper: rgb("#ffd8f0"),
   },
   {
     name: "Electric",
@@ -57,10 +57,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#1550ff") },
       { pos: 0.46, color: rgb("#25c8ff") },
       { pos: 0.72, color: rgb("#bff0ff") },
-      { pos: 1.0, color: rgb("#f4faff") },
+      { pos: 1.0, color: rgb("#c8e4ff") },
     ],
     ink: rgb("#0a2b8c"),
-    paper: rgb("#f4faff"),
+    paper: rgb("#c8e4ff"),
   },
   {
     name: "Jade",
@@ -69,10 +69,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#0f7a4a") },
       { pos: 0.46, color: rgb("#1fd88a") },
       { pos: 0.72, color: rgb("#b8f5d8") },
-      { pos: 1.0, color: rgb("#f3fbf6") },
+      { pos: 1.0, color: rgb("#c4f0d8") },
     ],
     ink: rgb("#0a3d28"),
-    paper: rgb("#f3fbf6"),
+    paper: rgb("#c4f0d8"),
   },
   {
     name: "Sunburst",
@@ -81,10 +81,10 @@ export const PALETTES: Palette[] = [
       { pos: 0.22, color: rgb("#0e7d86") },
       { pos: 0.46, color: rgb("#f2a20c") },
       { pos: 0.72, color: rgb("#ffe27a") },
-      { pos: 1.0, color: rgb("#fefaf0") },
+      { pos: 1.0, color: rgb("#f8e8b0") },
     ],
     ink: rgb("#0a3a40"),
-    paper: rgb("#fefaf0"),
+    paper: rgb("#f8e8b0"),
   },
 ];
 
@@ -184,7 +184,7 @@ export const CAST_STEP: readonly [number, number, number, number] = [0.0008, 0.0
 
 export const LETTER_SPREAD = 0.45;
 
-export const WARP_RADIUS = 0.2;
+export const WARP_RADIUS = 0.8;
 export const WARP_AMP = 0.013;
 export const WARP_SWIRL = 0.6;
 
