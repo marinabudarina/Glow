@@ -220,7 +220,7 @@ void main(){
   float cd = distance(vUv * uRes, uCursor * uRes);
   float hot = uCursorOn * smoothstep(min(uRes.x, uRes.y) * uWarpRadius * 2.4, 0.0, cd);
 
-  float b = 1.0 + (uBloom - 1.0) * 1.25 + 0.14 * hot;
+  float b = 1.0 + (uBloom - 1.0) * 1.25 + 0.28 * hot;
 
   float glow =
       1.00 * cover(uv)
@@ -232,7 +232,7 @@ void main(){
 
   float field = pow(glow, 0.6);
 
-  field = clamp(field + hot * 0.16 * field, 0.0, 1.0);
+  field = clamp(field + hot * 0.32 * field, 0.0, 1.0);
 
   if (uFront > 0.001) {
     vec2 q = vec2(fbm(uv * 2.1 + 3.7), fbm(uv * 2.1 - 1.3));
@@ -246,7 +246,7 @@ void main(){
 
   float drift = 0.022 * sin(uPhase + uv.x * 3.0 + uv.y * 2.0);
 
-  float t = clamp(1.0 - field + drift - hot * 0.10, 0.0, 1.0);
+  float t = clamp(1.0 - field + drift - hot * 0.22, 0.0, 1.0);
   vec3 col = gradientMap(t);
 
   vec3 bounced = mix(uPaper, uCol[2], texture2D(uL3, vUv + uCast3).a * 0.16);
