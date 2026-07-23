@@ -50,22 +50,21 @@ body {
 .input-overlay {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: #F2F2F2;
   z-index: 10;
 }
 
-/* Typed text display — upper third of screen, above the keyboard */
+/* Typed text display — sits in flow ABOVE the Spline, never overlaps */
 .typed-display {
-  position: absolute;
-  top: 22vh;
-  left: 50%;
-  transform: translateX(-50%);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  padding: 0 24px;
-  z-index: 20;
+  padding: 24px 24px 12px;
 }
 
 .typed-placeholder {
@@ -121,29 +120,18 @@ body {
   50%       { opacity: 0; }
 }
 
-/* Spline full-screen — 100vw × 100vh, no margins, no scale, no cropping */
+/* Spline — full width, fills remaining height below the text.
+   pointer-events left ON so the scene's built-in spin works. */
 .spline-wrap {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
-.spline-wrap > * {
-  pointer-events: none !important;
-}
-
-.spline-wrap canvas {
-  pointer-events: none !important;
-}
-
-/* Enter hint — bottom of screen */
+/* Enter hint — below the text, above the keyboard */
 .enter-hint {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  z-index: 20;
+  flex-shrink: 0;
+  padding: 0 0 20px;
   font-family: 'Inter', sans-serif;
   font-size: clamp(11px, 1.3vw, 14px);
   color: rgba(58, 48, 80, 0.38);
