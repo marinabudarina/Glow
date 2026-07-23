@@ -122,22 +122,16 @@ body {
   50%       { opacity: 0; }
 }
 
-/* Spline keyboard container — width/height set by JS to match visual scale */
+/* Spline keyboard container — full width so camera sees the whole keyboard */
 .spline-wrap {
+  width: 100%;
+  height: min(420px, 40vh);
   flex-shrink: 0;
-  position: relative;
-  overflow: visible;
 }
 
-/* Canvas renders at 1300×650 so Spline camera sees the full keyboard.
-   transform (scale + centering) is set inline by JS based on viewport width. */
 .spline-scaler {
-  position: absolute;
-  width: 1300px;
-  height: 650px;
-  left: 50%;
-  top: 50%;
-  transform-origin: center center;
+  width: 100%;
+  height: 100%;
   pointer-events: none !important;
 }
 
