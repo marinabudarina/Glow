@@ -50,22 +50,24 @@ body {
 .input-overlay {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
   background: #F2F2F2;
   z-index: 10;
 }
 
-/* Typed text display — floats above Spline, centred near bottom */
+/* Typed text display — sits above the Spline keyboard */
 .typed-display {
-  position: absolute;
-  bottom: 72px;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  z-index: 20;
   padding: 0 24px;
+  margin-bottom: 16px;
+  z-index: 20;
 }
 
 .typed-placeholder {
@@ -121,21 +123,17 @@ body {
   50%       { opacity: 0; }
 }
 
-/* Spline fills the entire overlay — no size constraint, camera sees full scene */
+/* Spline at 70% of viewport — camera sees full scene, text sits above */
 .spline-wrap {
-  position: absolute;
-  inset: 0;
+  width: 70vw;
+  height: 70vh;
+  flex-shrink: 0;
   pointer-events: none;
 }
 
-/* Enter hint — floats below the typed display */
+/* Enter hint — sits below the Spline */
 .enter-hint {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  z-index: 20;
+  margin-top: 16px;
   font-family: 'Inter', sans-serif;
   font-size: clamp(11px, 1.3vw, 14px);
   color: rgba(58, 48, 80, 0.38);
