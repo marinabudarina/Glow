@@ -555,6 +555,15 @@ export class BlurGlow {
     this.tgtOn = 0;
   };
 
+  configure(cfg: Partial<GlowConfig>) {
+    this.cfg = { ...this.cfg, ...cfg };
+    // Reset word sequencing so the new words start fresh
+    this.wordIdx = 0;
+    this.playedOnce = false;
+    this.morphing = false;
+    this.holdUntil = 0;
+  }
+
   start() {
     if (this.running || !this.gl || !this.compProg) return;
     this.running = true;

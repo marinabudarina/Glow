@@ -91,10 +91,9 @@ export default function App() {
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" && typed.trim().length > 0) {
         const phrase = `print("${typed.trim()}")`;
-        const words = [phrase];
-        setGlowConfig({
-          ...DEFAULT_CONFIG,
-          words,
+        // Configure the engine with the typed phrase before it becomes visible
+        engineRef.current?.configure({
+          words: [phrase],
           phraseInkColors: ["#2a0f66"],
         });
         setPhase("fadeOut");

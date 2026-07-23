@@ -64,7 +64,7 @@ body {
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  padding: 24px 24px 12px;
+  padding: 72px 24px 16px;
 }
 
 .typed-placeholder {
@@ -126,6 +126,12 @@ body {
   width: 100%;
   flex: 1;
   min-height: 0;
+  cursor: auto;
+}
+
+/* Ensure OS cursor stays visible — Spline scenes sometimes set cursor:none */
+.spline-wrap canvas {
+  cursor: auto !important;
 }
 
 /* Enter hint — below the text, above the keyboard */
