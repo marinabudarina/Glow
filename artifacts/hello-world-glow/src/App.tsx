@@ -145,13 +145,11 @@ export default function App() {
 
           {/* Spline 3D keyboard */}
           <div className="spline-wrap">
-            <div className="spline-scaler">
-              <SplineErrorBoundary
-                fallback={<div className="spline-fallback">⌨️</div>}
-              >
-                <Spline scene="https://prod.spline.design/H1LvhYkNlE0G22dJ/scene.splinecode" />
-              </SplineErrorBoundary>
-            </div>
+            <SplineErrorBoundary
+              fallback={<div className="spline-fallback">⌨️</div>}
+            >
+              <Spline scene="https://prod.spline.design/H1LvhYkNlE0G22dJ/scene.splinecode" />
+            </SplineErrorBoundary>
           </div>
 
           {/* Hint */}
