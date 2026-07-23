@@ -150,6 +150,42 @@ body {
   cursor: auto !important;
 }
 
+/* Glow-phase bottom hint — "copy to your website" */
+.glow-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(11px, 1.3vw, 14px);
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.04em;
+  user-select: none;
+  z-index: 20;
+}
+
+.glow-copy-btn {
+  cursor: pointer;
+}
+
+.glow-copy-btn kbd {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 1px 6px 2px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: background 0.15s, color 0.15s;
+}
+
+.glow-copy-btn:hover kbd {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.9);
+}
+
 /* Enter hint — below the text, above the keyboard */
 .enter-hint {
   flex-shrink: 0;
