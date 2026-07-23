@@ -174,7 +174,7 @@ export default function App() {
           </div>
 
           {/* Spline 3D keyboard */}
-          <div className="spline-wrap">
+          <div className="spline-wrap" onClick={(e) => e.stopPropagation()}>
             <SplineErrorBoundary
               fallback={<div className="spline-fallback">⌨️</div>}
             >
