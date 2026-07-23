@@ -54,10 +54,10 @@ body {
   z-index: 10;
 }
 
-/* Typed text display — above the keyboard, centred horizontally */
+/* Typed text display — upper third of screen, above the keyboard */
 .typed-display {
   position: absolute;
-  top: 8vh;
+  top: 22vh;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -121,20 +121,25 @@ body {
   50%       { opacity: 0; }
 }
 
-/* Spline renders full-screen so camera sees everything, then scaled to 70%.
-   transform: scale does not affect layout so the canvas stays full resolution. */
+/* Spline full-screen — 100vw × 100vh, no margins, no scale, no cropping */
 .spline-wrap {
   position: absolute;
   inset: 0;
-  transform: scale(0.7);
-  transform-origin: center center;
   pointer-events: none;
 }
 
-/* Enter hint — below the text, above the keyboard visual */
+.spline-wrap > * {
+  pointer-events: none !important;
+}
+
+.spline-wrap canvas {
+  pointer-events: none !important;
+}
+
+/* Enter hint — bottom of screen */
 .enter-hint {
   position: absolute;
-  top: calc(8vh + 60px);
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
