@@ -62,10 +62,10 @@ function GlowCanvas({
     const engine = new BlurGlow(hostRef.current, config);
     engineRef.current = engine;
 
-    // Shutter sound fires when morph begins (phrase is about to change)
+    // Shutter sound fires at morph midpoint — exactly when one phrase becomes the other
     const shutter = new Audio(`${import.meta.env.BASE_URL}shutter.mp3`);
     shutter.volume = 0.55;
-    engine.onMorphStart = () => {
+    engine.onMorphMid = () => {
       const s = shutter.cloneNode() as HTMLAudioElement;
       s.volume = 0.55;
       s.play().catch(() => {});

@@ -63,8 +63,8 @@ export class BlurGlow {
   private lastT = 0;
   private revealed = false;
 
-  /** Called when a morph transition begins (phrase is about to change). */
-  onMorphStart?: () => void;
+  /** Called at the midpoint of a morph — exactly when one phrase becomes the other. */
+  onMorphMid?: () => void;
   /** Called whenever the engine advances to a new word (after the morph finishes). */
   onWordChange?: (wordIdx: number) => void;
 
@@ -77,6 +77,7 @@ export class BlurGlow {
   private morphGlow = 0;
   private morphBody = 0;
   private morphing = false;
+  private morphMidFired = false;
   private holdUntil = 0;
 
   private paletteFrom: PaletteUniforms = paletteUniforms(PALETTES[0]);
@@ -360,7 +361,7 @@ export class BlurGlow {
   private beginMorph() {
     this.morph = 0;
     this.morphing = true;
-    this.onMorphStart?.();
+    this.morphMidFired = false;
     // Palette is 1-to-1 with word index; apply per-phrase ink colour overrides
     this.paletteFrom = this.phraseUniforms(this.wordIdx);
     this.paletteTo = this.phraseUniforms(this.nextWordIdx());
@@ -536,6 +537,10 @@ export class BlurGlow {
     if (!this.morphing && this.words.length > 1 && now >= this.holdUntil) this.beginMorph();
     if (this.morphing) {
       this.morph = Math.min(1, this.morph + dt / (MORPH_SEC / this.cfg.speedMultiplier));
+      if (!this.morphMidFired && this.morph >= 0.5) {
+        this.morphMidFired = true;
+        this.onMorphMid?.();
+      }
       if (this.morph >= 1) {
         this.finishMorph();
         this.holdUntil = now + this.holdFor(this.wordIdx);
