@@ -62,10 +62,10 @@ function GlowCanvas({
     const engine = new BlurGlow(hostRef.current, config);
     engineRef.current = engine;
 
-    // Shutter sound on each phrase change
+    // Shutter sound fires when morph begins (phrase is about to change)
     const shutter = new Audio(`${import.meta.env.BASE_URL}shutter.mp3`);
     shutter.volume = 0.55;
-    engine.onWordChange = () => {
+    engine.onMorphStart = () => {
       const s = shutter.cloneNode() as HTMLAudioElement;
       s.volume = 0.55;
       s.play().catch(() => {});
@@ -136,21 +136,30 @@ export default function App() {
     if (phase === "input") inputRef.current?.focus();
   }, [phase]);
 
-  // Ambient audio — fade in when glow starts
+  // Ambient audio — start on first user interaction, loop forever
   useEffect(() => {
-    if (phase !== "glow") return;
-    const a = getAmbient();
-    a.play().catch(() => {});
-    // Fade volume from 0 → 0.35 over 3 s
-    a.volume = 0;
-    let vol = 0;
-    const step = () => {
-      vol = Math.min(0.35, vol + 0.35 / 60);
-      a.volume = vol;
-      if (vol < 0.35) requestAnimationFrame(step);
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      const a = getAmbient();
+      a.volume = 0;
+      a.play().catch(() => {});
+      let vol = 0;
+      const step = () => {
+        vol = Math.min(0.35, vol + 0.35 / 90);
+        a.volume = vol;
+        if (vol < 0.35) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
     };
-    requestAnimationFrame(step);
-  }, [phase]);
+    window.addEventListener("keydown", start, { once: true });
+    window.addEventListener("pointerdown", start, { once: true });
+    return () => {
+      window.removeEventListener("keydown", start);
+      window.removeEventListener("pointerdown", start);
+    };
+  }, []);
 
   // onChange — intercept "." to commit the current segment
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

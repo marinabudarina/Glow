@@ -63,6 +63,8 @@ export class BlurGlow {
   private lastT = 0;
   private revealed = false;
 
+  /** Called when a morph transition begins (phrase is about to change). */
+  onMorphStart?: () => void;
   /** Called whenever the engine advances to a new word (after the morph finishes). */
   onWordChange?: (wordIdx: number) => void;
 
@@ -358,6 +360,7 @@ export class BlurGlow {
   private beginMorph() {
     this.morph = 0;
     this.morphing = true;
+    this.onMorphStart?.();
     // Palette is 1-to-1 with word index; apply per-phrase ink colour overrides
     this.paletteFrom = this.phraseUniforms(this.wordIdx);
     this.paletteTo = this.phraseUniforms(this.nextWordIdx());
