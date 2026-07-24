@@ -150,6 +150,21 @@ body {
   cursor: auto !important;
 }
 
+/* ── Mobile: hide the 3D keyboard, center the text ───── */
+@media (max-width: 768px) {
+  .spline-wrap {
+    display: none;
+  }
+
+  .input-overlay {
+    justify-content: center;
+  }
+
+  .typed-display {
+    padding: 0 24px 24px;
+  }
+}
+
 /* Glow-phase bottom hint — "copy to your website" */
 .glow-hint {
   position: absolute;
