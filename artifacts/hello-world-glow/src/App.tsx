@@ -93,6 +93,7 @@ export default function App() {
   // The original (unexpanded) user phrases — used to build the shareable URL
   const [userPhrases, setUserPhrases] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const engineRef = useRef<BlurGlow | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -163,6 +164,29 @@ export default function App() {
 
   return (
     <div className="root" onClick={handleOverlayClick}>
+
+      {/* ── Top nav ── */}
+      <nav className="top-nav" onClick={(e) => e.stopPropagation()}>
+        <span className="nav-brand">Budarina</span>
+        <button className="nav-about" onClick={() => setAboutOpen(true)}>about</button>
+      </nav>
+
+      {/* ── About popup ── */}
+      {aboutOpen && (
+        <div className="about-backdrop" onClick={() => setAboutOpen(false)}>
+          <div className="about-card" onClick={(e) => e.stopPropagation()}>
+            <button className="about-close" onClick={() => setAboutOpen(false)}>✕</button>
+            <p className="about-created">Created by Marina Budarina</p>
+            <p className="about-tagline">Trying to make internet fun again</p>
+            <div className="about-links">
+              <a href="https://budarina.design" target="_blank" rel="noreferrer">budarina.design</a>
+              <a href="https://www.instagram.com/marina_uiux/" target="_blank" rel="noreferrer">Instagram</a>
+              <a href="https://x.com/marina_uiux" target="_blank" rel="noreferrer">X</a>
+              <a href="https://www.linkedin.com/in/marina-budarina/?skipRedirect=true" target="_blank" rel="noreferrer">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Glow layer — always mounted so it's ready */}
       <GlowCanvas visible={phase === "glow"} config={DEFAULT_CONFIG} engineRef={engineRef} />
 

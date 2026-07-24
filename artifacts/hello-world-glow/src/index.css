@@ -165,6 +165,125 @@ body {
   }
 }
 
+/* ── Top nav ──────────────────────────────────────── */
+.top-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  pointer-events: none;
+}
+
+.nav-brand {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(12px, 1.4vw, 15px);
+  font-weight: 500;
+  color: rgba(58, 48, 80, 0.55);
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.nav-about {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(12px, 1.4vw, 15px);
+  font-weight: 400;
+  color: rgba(58, 48, 80, 0.45);
+  letter-spacing: 0.04em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  pointer-events: all;
+  transition: color 0.15s;
+}
+
+.nav-about:hover {
+  color: rgba(58, 48, 80, 0.85);
+}
+
+/* ── About popup ──────────────────────────────────── */
+.about-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 15, 35, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.about-card {
+  position: relative;
+  background: rgba(250, 247, 255, 0.92);
+  border: 1px solid rgba(58, 48, 80, 0.1);
+  border-radius: 16px;
+  padding: 40px 44px 36px;
+  max-width: 380px;
+  width: calc(100% - 48px);
+  box-shadow: 0 8px 40px rgba(20, 15, 35, 0.12);
+}
+
+.about-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: rgba(58, 48, 80, 0.35);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.about-close:hover {
+  color: rgba(58, 48, 80, 0.7);
+}
+
+.about-created {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(58, 48, 80, 0.85);
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.about-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: rgba(58, 48, 80, 0.45);
+  margin-bottom: 32px;
+  letter-spacing: 0.01em;
+}
+
+.about-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.about-links a {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: rgba(58, 48, 80, 0.6);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+}
+
+.about-links a:hover {
+  color: rgba(58, 48, 80, 0.95);
+}
+
 /* Glow-phase bottom hint — "copy to your website" */
 .glow-hint {
   position: absolute;
