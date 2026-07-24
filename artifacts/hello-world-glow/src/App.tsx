@@ -106,6 +106,18 @@ export default function App() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const engineRef = useRef<BlurGlow | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const ambientRef = useRef<HTMLAudioElement | null>(null);
+
+  // Lazily create ambient audio once
+  function getAmbient() {
+    if (!ambientRef.current) {
+      const a = new Audio(`${import.meta.env.BASE_URL}ambient.mp3`);
+      a.loop = true;
+      a.volume = 0;
+      ambientRef.current = a;
+    }
+    return ambientRef.current;
+  }
 
   // On mount: auto-start glow if URL has ?w= phrases
   // Child (GlowCanvas) effects run before parent, so engineRef is set by the time this runs
@@ -122,6 +134,22 @@ export default function App() {
   // Focus hidden input in input phase
   useEffect(() => {
     if (phase === "input") inputRef.current?.focus();
+  }, [phase]);
+
+  // Ambient audio — fade in when glow starts
+  useEffect(() => {
+    if (phase !== "glow") return;
+    const a = getAmbient();
+    a.play().catch(() => {});
+    // Fade volume from 0 → 0.35 over 3 s
+    a.volume = 0;
+    let vol = 0;
+    const step = () => {
+      vol = Math.min(0.35, vol + 0.35 / 60);
+      a.volume = vol;
+      if (vol < 0.35) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
   }, [phase]);
 
   // onChange — intercept "." to commit the current segment
